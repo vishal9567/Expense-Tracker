@@ -43,6 +43,7 @@ function Register() {
   const navigate= useNavigate()
   useEffect(()=>{
     if(user) navigate('/')
+    else navigate('/register')
   },[])
 
   const handleChange = (e) => {

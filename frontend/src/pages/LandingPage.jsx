@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { userData } from '../utils/slices/userSlice'
-import { Box, Container, Grid, createTheme, ThemeProvider, Typography,CssBaseline } from '@mui/material'
+import { Box, Container, Grid, createTheme, ThemeProvider,CssBaseline } from '@mui/material'
 import SideNav from '../components/SideNav'
 import Dashboard from '../components/Dashboard'
 import Expense from '../components/Expense'
+import { useNavigate } from 'react-router-dom'
 
 const theme = createTheme({
     palette: {
@@ -22,6 +23,9 @@ const theme = createTheme({
 
 function LandingPage() {
     const [activePage,setActivePage]=useState('dashboard')
+    const user = useSelector(userData)
+    const navigate=useNavigate()
+
     const handleButtonClick=(page)=>{
         setActivePage(page)
     }
@@ -29,7 +33,9 @@ function LandingPage() {
         if(activePage === 'dashboard') return <Dashboard/>
         else if(activePage === 'expense') return <Expense/>
     }
-    const user = useSelector(userData)
+    useEffect(()=>{
+        if(!user) navigate('/login')
+    },[])
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline/>

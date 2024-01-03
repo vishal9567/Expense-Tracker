@@ -40,6 +40,7 @@ function Login() {
   const navigate= useNavigate()
   useEffect(()=>{
     if(user) navigate('/')
+    else navigate('/login')
   },[])
 
   const handleChange = (e) => {
