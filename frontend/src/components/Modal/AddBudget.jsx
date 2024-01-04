@@ -1,11 +1,71 @@
 import React, { useState } from 'react'
 import { Box, Button, Container,  Modal,  TextField } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { userData } from '../../utils/slices/userSlice'
+import MyBackDrop from '../BackDrop/MyBackDrop'
+import MySnackBar from '../SnackBar/MySnackBar'
+import axios from 'axios'
 
+const baseUrl = import.meta.env.VITE_BASE_URL
 
 function AddBudget({ open, handleClose, }) {
     const [budget,setBudget]=useState('')
+    const [openBackDrop, setOpenBackDrop] = useState(false)
+    const [openSnackBar, setOpenSnackBar] = useState({
+        open: false,
+        message: '',
+        severity: ''
+    })
+   
+
+
+    const navigate = useNavigate()
+    const user=useSelector(userData)
+
+
+    const closeSnackBar = () => {
+        setOpenSnackBar(false)
+    }
+
+
     const handleChange = (e) => {
         setBudget(e.target.value)
+    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setOpenBackDrop(true)
+        const Data={
+            amount:budget,
+            id:user.id,
+        }
+        try {
+            console.log(Data);
+            const { data } = await axios.post(`${baseUrl}/addBudget`, Data)
+            setOpenSnackBar((prev) => ({
+                ...prev,
+                open: true,
+                message: data.message,
+                severity: data.color
+            }))
+            setTimeout(() => {
+                navigate('/login')
+            }, 1000)
+        }
+        catch (err) {
+            const data = err.response.data
+            console.log('not here comes');
+
+            setOpenSnackBar((prev) => ({
+                ...prev,
+                open: true,
+                message: data.message,
+                severity: data.color
+            }))
+        }
+        finally {
+            setOpenBackDrop(false)
+        }
     }
 
     return (
@@ -39,7 +99,7 @@ function AddBudget({ open, handleClose, }) {
                         }}
                         backgroundColor='rgb(27, 28, 27)'
                     >
-                        <form>
+                        <form onSubmit={handleSubmit}>
                             <TextField
                                 type='number'
                                 label={'Amount'}
@@ -54,8 +114,10 @@ function AddBudget({ open, handleClose, }) {
                                 sx={{ marginTop: { xs: 2, md: 3 }, '& input': { color: 'white' } }}
                             />
                             
-                            <Button type='submit' backgroundColor="primary" variant='contained' fullWidth sx={{ marginTop: { xs: 2, md: 3 },color:'white',backgroundColor:'rgb(21,101,192)'}} >Submit</Button>
+                            <Button type='submit'  variant='contained' fullWidth sx={{ marginTop: { xs: 2, md: 3 },color:'white',backgroundColor:'rgb(21,101,192)'}} >Submit</Button>
                         </form>
+                        <MyBackDrop open={openBackDrop} handleClose={handleClose} />
+                        <MySnackBar handleClose={closeSnackBar} open={openSnackBar.open} message={openSnackBar.message} color={openSnackBar.severity} />
                     </Box>
                 </Container>
 

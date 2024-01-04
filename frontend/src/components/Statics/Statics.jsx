@@ -1,19 +1,19 @@
 import { Box, Container, Grid, Typography } from "@mui/material";
 import React from "react";
 
-function Statics({ Icon, title, values }) {
+function Statics({ Icon, title, values,bgColor="rgb(40,38,37)" }) {
     const IconComponent = Icon;
     return (
-        <Grid item xs={3} md={9}>
+        <Grid item xs={12} md={4}>
             <Container
                 sx={{
                     height: '100px',
-                    backgroundColor: "rgb(40,38,37)",
+                    backgroundColor: bgColor,
                     borderRadius: "10px",
                     ":hover": {
-                        backgroundColor: "rgb(242,78,112)",
+                        backgroundColor: "rgb(99, 99, 97)",
                         "& .hoverTypo": {
-                            backgroundColor: "rgb(242,78,112)",
+                            backgroundColor: "rgb(99, 99, 97)",
                             color: "white",
                         },
                     },
@@ -29,7 +29,7 @@ function Statics({ Icon, title, values }) {
                     {IconComponent && (
                         <IconComponent
                             className={"hoverTypo"}
-                            sx={{ color: "white", backgroundColor: "rgb(40,38,37)" }}
+                            sx={{ color: "white", backgroundColor: bgColor }}
                         />
                     )}
                     {values && <Typography className="hoverTypo">{values}</Typography>}

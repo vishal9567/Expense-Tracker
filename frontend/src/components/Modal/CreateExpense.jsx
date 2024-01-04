@@ -1,18 +1,75 @@
 import React, { useState } from 'react'
 import { Box, Button, Container, MenuItem, Modal, Select, TextField } from '@mui/material'
+import axios from 'axios'
+import MyBackDrop from '../BackDrop/MyBackDrop'
+import { useNavigate } from 'react-router-dom'
+import MySnackBar from '../SnackBar/MySnackBar'
+import { useSelector } from 'react-redux'
+import { userData } from '../../utils/slices/userSlice'
+
+const baseUrl = import.meta.env.VITE_BASE_URL
 
 
 function CreateExpense({ open, handleClose, }) {
+    const [openBackDrop, setOpenBackDrop] = useState(false)
+    const [openSnackBar, setOpenSnackBar] = useState({
+        open: false,
+        message: '',
+        severity: ''
+    })
     const [formData, setFormData] = useState({
         date: '',
         amount: '',
         expense: ''
     })
+
+
+    const navigate = useNavigate()
+    const user=useSelector(userData)
+
+
+    const closeSnackBar = () => {
+        setOpenSnackBar(false)
+    }
     const handleChange = (e) => {
         setFormData((prev) => ({
             ...prev,
             [e.target.name]: e.target.value
         }))
+    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setOpenBackDrop(true)
+        const Data={
+            date:formData.date,
+            amount:formData.amount,
+            expense:formData.expense,
+            id:user.id,
+        }
+        try {
+            const { data } = await axios.post(`${baseUrl}/addExpense`, Data)
+            setOpenSnackBar((prev) => ({
+                ...prev,
+                open: true,
+                message: data.message,
+                severity: data.color
+            }))
+            setTimeout(() => {
+                navigate('/login')
+            }, 1000)
+        }
+        catch (err) {
+            const data = err.response.data
+            setOpenSnackBar((prev) => ({
+                ...prev,
+                open: true,
+                message: data.message,
+                severity: data.color
+            }))
+        }
+        finally {
+            setOpenBackDrop(false)
+        }
     }
 
     return (
@@ -46,7 +103,7 @@ function CreateExpense({ open, handleClose, }) {
                         }}
                         backgroundColor='rgb(27, 28, 27)'
                     >
-                        <form>
+                        <form onSubmit={handleSubmit}>
                             <TextField
                                 type='number'
                                 label={'Amount'}
@@ -91,8 +148,10 @@ function CreateExpense({ open, handleClose, }) {
                                 <MenuItem value={'transportation'} sx={{ color: 'black' }}>Transportation</MenuItem>
                                 <MenuItem value={'others'} sx={{ color: 'black' }}>Others</MenuItem>
                             </TextField>
-                            <Button type='submit' backgroundColor="primary" variant='contained' fullWidth sx={{ marginTop: { xs: 2, md: 3 },color:'white',backgroundColor:'rgb(21,101,192)'}} >Submit</Button>
+                            <Button type='submit'  variant='contained' fullWidth sx={{ marginTop: { xs: 2, md: 3 }, color: 'white', backgroundColor: 'rgb(21,101,192)' }} >Submit</Button>
                         </form>
+                        <MyBackDrop open={openBackDrop} handleClose={handleClose} />
+                        <MySnackBar handleClose={closeSnackBar} open={openSnackBar.open} message={openSnackBar.message} color={openSnackBar.severity} />
                     </Box>
                 </Container>
 

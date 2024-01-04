@@ -12,7 +12,24 @@ const userSchema = mongoose.Schema({
     password:{
         type:String,
         require:true
-    }
+    },
+    budget:{
+        type:Number,
+        default:0
+    },
+    expense:[
+       {
+        date:{
+            type:Date
+        },
+        amount:{
+            type:Number
+        },
+        category:{
+            type:String
+        }
+       }
+    ]
 })
 
 const User=mongoose.model('User',userSchema)

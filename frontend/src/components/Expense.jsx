@@ -1,6 +1,5 @@
 import { Box, Button, Grid, Typography } from '@mui/material'
 import React, { useState } from 'react'
-
 import MyTable from './Table/MyTable'
 import CreateExpense from './Modal/CreateExpense'
 

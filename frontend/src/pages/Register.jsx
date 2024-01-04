@@ -72,7 +72,6 @@ function Register() {
           message: data.message,
           severity: data.color
         }))
-        console.log(data.newUser);
         dispatch(setUserData(data.newUser))
         setTimeout(() => {
           
