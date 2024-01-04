@@ -33,7 +33,6 @@ function Dashboard() {
         const fetchData = async () => {
             try {
                 const { data } = await axios.get(`${baseUrl}/dashboardData?id=${user.id}`)
-                console.log(data);
                 dispatch(setDashboardInfo(data))
             }
             catch (err) {

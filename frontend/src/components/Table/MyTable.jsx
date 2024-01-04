@@ -33,7 +33,6 @@ function MyTable() {
     const limit=skip + perPage;
 
     const setPagination=(data)=>{
-        console.log('cal comes');
         const len=data.length
         const totalCount=Math.ceil(len/perPage)
         dispatch(setTotalCount(totalCount))
@@ -45,7 +44,6 @@ function MyTable() {
         const fetchData = async () => {
             const { data } = await axios.get(`${baseUrl}/expeseList?id=${user.id}`);
             setPagination(data)
-            console.log(data);
         };
         fetchData();
     }, [togle,CurrentPage]);
@@ -58,9 +56,7 @@ function MyTable() {
     };
 
     const deletExpense = (id) => {
-        console.log(id);
         const expenses = tableData.filter(item => item._id === id)
-        console.log(expenses);
         setAlert((current) => ({
             ...current,
             id: id,
@@ -72,7 +68,6 @@ function MyTable() {
         setAlert({ id: '', open: false, msg: '' })
     }
     const handleDeleteAgree = async (id) => {
-        console.log(id);
         await axios.delete(`${baseUrl}/deleteExpense?id=${id}&userId=${user.id}`)  
         setTogle(!togle)
         closeAlert()
