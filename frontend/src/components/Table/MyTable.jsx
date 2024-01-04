@@ -11,8 +11,8 @@ import {
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
-import { userData } from "../../utils/slices/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { currentPage, setTotalCount, userData } from "../../utils/slices/userSlice";
 import MyAlert from "../Alert/MyAlert";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
@@ -26,16 +26,29 @@ function MyTable() {
         msg: ''
     })
     const user = useSelector(userData);
+    const dispatch=useDispatch()
+    const CurrentPage=useSelector(currentPage)
+    const perPage=3;
+    const skip=CurrentPage*perPage - perPage;
+    const limit=skip + perPage;
 
+    const setPagination=(data)=>{
+        console.log('cal comes');
+        const len=data.length
+        const totalCount=Math.ceil(len/perPage)
+        dispatch(setTotalCount(totalCount))
+        const Data=data.slice(skip,limit)
+        setTableData(Data);
+    }
 
     useEffect(() => {
         const fetchData = async () => {
             const { data } = await axios.get(`${baseUrl}/expeseList?id=${user.id}`);
-            setTableData(data);
+            setPagination(data)
             console.log(data);
         };
         fetchData();
-    }, [togle]);
+    }, [togle,CurrentPage]);
 
     const getDate = (isoDate) => {
         const date = new Date(isoDate);
@@ -81,7 +94,7 @@ function MyTable() {
                     {tableData &&
                         tableData.map((item, i) => (
                             <TableRow key={item._id}>
-                                <TableCell>{i + 1}</TableCell>
+                                <TableCell>{perPage * (CurrentPage - 1) + (i + 1)}</TableCell>
                                 <TableCell>{getDate(item?.date)}</TableCell>
                                 <TableCell>{item?.amount}</TableCell>
                                 <TableCell>{item?.category}</TableCell>
